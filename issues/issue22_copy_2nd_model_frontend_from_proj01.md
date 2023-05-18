@@ -1,8 +1,8 @@
-Bring over frontend crud files for 2nd Model from team01
+Bring over frontend crud files for Dog from team01
 
 # Acceptance Criteria:
 
-All of the following refer to the forms, tables, pages, etc. for the frontend of the CRUD operations for the 2nd model added in team01 (in addition to Restaurant).  I suggest that you edit this issue to put  the name of that model in the title.
+All of the following refer to the forms, tables, pages, etc. for the frontend of the CRUD operations for `Dog`
 
 - [ ] The relevant Form and Table components along with the tests and storybook entries have been copied from team01 into team03
 - [ ] The relevant pages, along with the tests and storybook entries have been copied from team01 into team03
