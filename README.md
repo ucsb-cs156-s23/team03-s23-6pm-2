@@ -5,14 +5,14 @@ TODO: Adjust the link to the deployed production app
 for your team here, then remove this TODO.
 ```
 
-* Production: <https://team03-prod.dokku-xx.cs.ucsb.edu>
+* Production: <https://team03-prod.dokku-06.cs.ucsb.edu>
 
 ```
 TODO: Adjust the link to the deployed qa app 
 for your team here, then remove this TODO.
 ```
 
-* QA: <https://team03-qa.dokku-xx.cs.ucsb.edu>
+* QA: <https://team03-qa.dokku-06.cs.ucsb.edu>
 
 # Environment needed
 
