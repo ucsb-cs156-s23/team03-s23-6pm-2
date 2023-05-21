@@ -2,6 +2,7 @@ import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import RestaurantForm from "main/components/Restaurants/RestaurantForm";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 const createRestaurant = async (restaurant) => {
   try {
@@ -25,6 +26,7 @@ export default function RestaurantCreatePage() {
     try {
       const createdRestaurant = await createRestaurant(restaurant);
       console.log("createdRestaurant: " + JSON.stringify(createdRestaurant));
+      toast(`New restaurant Created - id: ${createdRestaurant.id} name: ${createdRestaurant.name}`);
       navigate("/restaurants");
     } catch (error) {
       console.error("Error creating restaurant: ", error);
