@@ -15,7 +15,8 @@ export default function RestaurantTable({
 
   const onDeleteSuccess = message => {
     console.log(message);
-    toast(message);
+    toast.success(`Restaurant successfully deleted`);
+
   };
 
   const objectToAxiosParams = function (cell) {
