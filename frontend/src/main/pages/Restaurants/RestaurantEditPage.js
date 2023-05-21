@@ -1,30 +1,52 @@
-
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import { useParams } from "react-router-dom";
-import { restaurantUtils }  from 'main/utils/restaurantUtils';
+import {Navigate, useParams} from "react-router-dom";
 import RestaurantForm from 'main/components/Restaurants/RestaurantForm';
-import { useNavigate } from 'react-router-dom'
-
+import {toast} from "react-toastify";
+import {useBackend, useBackendMutation} from "../../utils/useBackend";
 
 export default function RestaurantEditPage() {
-    let { id } = useParams();
+  let {id} = useParams();
+  const {data: restaurant} =     useBackend(
+    [`/api/Restaurant?id=${id}`],
+    {  // Stryker disable next-line all : GET is the default, so changing this to "" doesn't introduce a bug
+      method: "GET",
+      url: `/api/Restaurant`,
+      params: {id}
+    }
+  );
 
-    let navigate = useNavigate(); 
+  const objectToAxiosPutParams = (restaurant) => ({
+    url: "/api/Restaurant",
+    method: "PUT",
+    params: {id: restaurant.id},
+    data: {
+      name: restaurant.name,
+      description: restaurant.description,
+    }
+  });
 
-    const response = restaurantUtils.getById(id);
+  const onSuccess = (restaurant) => {
+    toast(`Restaurant Updated - id: ${restaurant.id} name: ${restaurant.name}`);
+  };
 
-    const onSubmit = async (restaurant) => {
-        const updatedRestaurant = restaurantUtils.update(restaurant);
-        console.log("updatedRestaurant: " + JSON.stringify(updatedRestaurant));
-        navigate("/restaurants");
-    }  
+  const mut = useBackendMutation(objectToAxiosPutParams, {onSuccess}, [`/api/restaurants?id=${id}`]);
+  const onSubmit = async (restaurant) => {
+    mut.mutate(restaurant);
+  };
 
-    return (
-        <BasicLayout>
-            <div className="pt-2">
-                <h1>Edit Restaurant</h1>
-                <RestaurantForm submitAction={onSubmit} buttonLabel={"Update"} initialContents={response.restaurant}/>
-            </div>
-        </BasicLayout>
-    )
+  if (mut.isSuccess) {
+    return <Navigate to="/restaurants"/>;
+  }
+
+  return (
+    <BasicLayout>
+      <div className="pt-2">
+        <h1>Edit Restaurant</h1>
+        {
+          restaurant &&
+          <RestaurantForm submitAction={onSubmit} buttonLabel={"Update"} initialContents={restaurant}/>
+        }
+      </div>
+    </BasicLayout>
+  );
 }

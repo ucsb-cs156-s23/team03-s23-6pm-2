@@ -1,17 +1,35 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import RestaurantForm from "main/components/Restaurants/RestaurantForm";
-import { useNavigate } from 'react-router-dom'
-import { restaurantUtils } from 'main/utils/restaurantUtils';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+const createRestaurant = async (restaurant) => {
+  try {
+    const response = await axios.post("/api/Restaurant/post", null, {
+      params: {
+        name: restaurant.name,
+        description: restaurant.description,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error creating restaurant: ${error.response.statusText}`);
+  }
+};
 
 export default function RestaurantCreatePage() {
-
-  let navigate = useNavigate(); 
+  let navigate = useNavigate();
 
   const onSubmit = async (restaurant) => {
-    const createdRestaurant = restaurantUtils.add(restaurant);
-    console.log("createdRestaurant: " + JSON.stringify(createdRestaurant));
-    navigate("/restaurants");
-  }  
+    try {
+      const createdRestaurant = await createRestaurant(restaurant);
+      console.log("createdRestaurant: " + JSON.stringify(createdRestaurant));
+      navigate("/restaurants");
+    } catch (error) {
+      console.error("Error creating restaurant: ", error);
+    }
+  };
 
   return (
     <BasicLayout>
@@ -20,5 +38,5 @@ export default function RestaurantCreatePage() {
         <RestaurantForm submitAction={onSubmit} />
       </div>
     </BasicLayout>
-  )
+  );
 }
