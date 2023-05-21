@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for utils/restaurantUtils.js</title>
+    <title>Code coverage report for utils/dogUtils.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> restaurantUtils.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> dogUtils.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -247,87 +247,87 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// get restaurants from local storage
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// get dogs from local storage
 const get = () =&gt; {
-    const restaurantValue = localStorage.getItem("restaurants");
-    if (restaurantValue === undefined) {
-        const restaurantCollection = { nextId: 1, restaurants: [] }
-        return set(restaurantCollection);
+    const dogValue = localStorage.getItem("dogs");
+    if (dogValue === undefined) {
+        const dogCollection = { nextId: 1, dogs: [] }
+        return set(dogCollection);
     }
-    const restaurantCollection = JSON.parse(restaurantValue);
-    if (restaurantCollection === null) {
-        const restaurantCollection = { nextId: 1, restaurants: [] }
-        return set(restaurantCollection);
+    const dogCollection = JSON.parse(dogValue);
+    if (dogCollection === null) {
+        const dogCollection = { nextId: 1, dogs: [] }
+        return set(dogCollection);
     }
-    return restaurantCollection;
+    return dogCollection;
 };
 &nbsp;
 const getById = (id) =&gt; {
     if (id === undefined) {
         return { "error": "id is a required parameter" };
     }
-    const restaurantCollection = get();
-    const restaurants = restaurantCollection.restaurants;
+    const dogCollection = get();
+    const dogs = dogCollection.dogs;
 &nbsp;
     /* eslint-disable-next-line eqeqeq */ // we really do want == here, not ===
-    const index = restaurants.findIndex((r) =&gt; r.id == id);
+    const index = dogs.findIndex((r) =&gt; r.id == id);
     if (index === -1) {
-        return { "error": `restaurant with id ${id} not found` };
+        return { "error": `dog with id ${id} not found` };
     }
-    return { restaurant: restaurants[index] };
+    return { dog: dogs[index] };
 }
 &nbsp;
-// set restaurants in local storage
-const set = (restaurantCollection) =&gt; {
-    localStorage.setItem("restaurants", JSON.stringify(restaurantCollection));
-    return restaurantCollection;
+// set dogs in local storage
+const set = (dogCollection) =&gt; {
+    localStorage.setItem("dogs", JSON.stringify(dogCollection));
+    return dogCollection;
 };
 &nbsp;
-// add a restaurant to local storage
-const add = (restaurant) =&gt; {
-    const restaurantCollection = get();
-    restaurant = { ...restaurant, id: restaurantCollection.nextId };
-    restaurantCollection.nextId++;
-    restaurantCollection.restaurants.push(restaurant);
-    set(restaurantCollection);
-    return restaurant;
+// add a dog to local storage
+const add = (dog) =&gt; {
+    const dogCollection = get();
+    dog = { ...dog, id: dogCollection.nextId };
+    dogCollection.nextId++;
+    dogCollection.dogs.push(dog);
+    set(dogCollection);
+    return dog;
 };
 &nbsp;
-// update a restaurant in local storage
-const update = (restaurant) =&gt; {
-    const restaurantCollection = get();
+// update a dog in local storage
+const update = (dog) =&gt; {
+    const dogCollection = get();
 &nbsp;
-    const restaurants = restaurantCollection.restaurants;
+    const dogs = dogCollection.dogs;
 &nbsp;
     /* eslint-disable-next-line eqeqeq */ // we really do want == here, not ===
-    const index = restaurants.findIndex((r) =&gt; r.id == restaurant.id);
+    const index = dogs.findIndex((r) =&gt; r.id == dog.id);
     if (index === -1) {
-        return { "error": `restaurant with id ${restaurant.id} not found` };
+        return { "error": `dog with id ${dog.id} not found` };
     }
-    restaurants[index] = restaurant;
-    set(restaurantCollection);
-    return { restaurantCollection: restaurantCollection };
+    dogs[index] = dog;
+    set(dogCollection);
+    return { dogCollection: dogCollection };
 };
 &nbsp;
-// delete a restaurant from local storage
+// delete a dog from local storage
 const del = (id) =&gt; {
     if (id === undefined) {
         return { "error": "id is a required parameter" };
     }
-    const restaurantCollection = get();
-    const restaurants = restaurantCollection.restaurants;
+    const dogCollection = get();
+    const dogs = dogCollection.dogs;
 &nbsp;
     /* eslint-disable-next-line eqeqeq */ // we really do want == here, not ===
-    const index = restaurants.findIndex((r) =&gt; r.id == id);
+    const index = dogs.findIndex((r) =&gt; r.id == id);
     if (index === -1) {
-        return { "error": `restaurant with id ${id} not found` };
+        return { "error": `dog with id ${id} not found` };
     }
-    restaurants.splice(index, 1);
-    set(restaurantCollection);
-    return { restaurantCollection: restaurantCollection };
+    dogs.splice(index, 1);
+    set(dogCollection);
+    return { dogCollection: dogCollection };
 };
 &nbsp;
-const restaurantUtils = {
+const dogUtils = {
     get,
     getById,
     add,
@@ -335,7 +335,7 @@ const restaurantUtils = {
     del
 };
 &nbsp;
-export { restaurantUtils };
+export { dogUtils };
 &nbsp;
 &nbsp;
 &nbsp;
@@ -346,7 +346,7 @@ export { restaurantUtils };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Sun May 21 2023 14:14:15 GMT-0700 (Pacific Daylight Time)
+                at Sun May 21 2023 15:50:29 GMT-0700 (Pacific Daylight Time)
             </div>
         <script src="../prettify.js"></script>
         <script>
