@@ -93,11 +93,11 @@ describe("RestaurantEditPage tests", () => {
         const updateButton = screen.getByText("Update");
         expect(updateButton).toBeInTheDocument();
 
-        await act(async () => {
+    
             fireEvent.change(nameInput, { target: { value: 'South Coast Deli (Goleta)' } })
             fireEvent.change(descriptionInput, { target: { value: 'Sandwiches, Salads and more' } })
             fireEvent.click(updateButton);
-        });
+   
 
         await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
         await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/restaurants"));
