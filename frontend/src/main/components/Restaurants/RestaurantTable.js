@@ -31,6 +31,8 @@ export default function RestaurantTable({
 
   const handleDelete = async (cell) => {
     deleteMutation.mutate(cell);
+    window.location.reload();
+
   };
 
   const navigate = useNavigate();
