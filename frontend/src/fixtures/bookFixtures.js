@@ -15,7 +15,7 @@ const bookFixtures = {
             "id": 2,
             "title": "The Lord of the Rings",
             "author": "J.R.R. Tolkien",
-            "year": "1949"     
+            "year": "1954"     
         },
 
         {
