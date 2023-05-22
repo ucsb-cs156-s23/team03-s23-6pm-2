@@ -11,6 +11,11 @@ import UCSBDatesIndexPage from "main/pages/UCSBDates/UCSBDatesIndexPage";
 import UCSBDatesCreatePage from "main/pages/UCSBDates/UCSBDatesCreatePage";
 import UCSBDatesEditPage from "main/pages/UCSBDates/UCSBDatesEditPage";
 
+import DogsCreatePage from "main/pages/Dogs/DogsCreatePage";
+import DogsEditPage from "main/pages/Dogs/DogsEditPage";
+import DogDetailsPage from "main/pages/Dogs/DogDetailsPage";
+import DogIndexPage from "main/pages/Dogs/DogIndexPage";
+
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -26,6 +31,8 @@ function App() {
       <Routes>
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
+
+
         {
           hasRole(currentUser, "ROLE_ADMIN") && <Route exact path="/admin/users" element={<AdminUsersPage />} />
         }
@@ -55,6 +62,23 @@ function App() {
           )
         }
 
+{
+          hasRole(currentUser, "ROLE_USER") && (
+            <>
+              <Route exact path="/dogs/list" element={<DogIndexPage />} />
+            </>
+          )
+        }
+        {
+          hasRole(currentUser, "ROLE_ADMIN") && (
+            <>
+              <Route exact path="/dogs/create" element={<DogsCreatePage />} />
+              <Route exact path="/dogs/edit/:id" element={<DogsEditPage />} />
+              <Route exact path="/dogs/details/:id" element={<DogDetailsPage />} />
+            </>
+          )
+        }
+        
       </Routes>
     </BrowserRouter>
   );
