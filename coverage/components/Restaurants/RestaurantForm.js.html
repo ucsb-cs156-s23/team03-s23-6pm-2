@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/Dogs/DogForm.js</title>
+    <title>Code coverage report for components/Restaurants/RestaurantForm.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/Dogs</a> DogForm.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/Restaurants</a> RestaurantForm.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -157,13 +157,8 @@
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -175,9 +170,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -250,13 +253,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react'
 import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
 &nbsp;
-function DogForm({ initialContents, submitAction, buttonLabel = "Create" }) {
+function RestaurantForm({ initialContents, submitAction, buttonLabel = "Create" }) {
+&nbsp;
     const navigate = useNavigate();
     
     // Stryker disable all
@@ -269,9 +272,10 @@ function DogForm({ initialContents, submitAction, buttonLabel = "Create" }) {
     );
     // Stryker enable all
    
-    const testIdPrefix = "DogForm";
+    const testIdPrefix = "RestaurantForm";
 &nbsp;
     return (
+&nbsp;
         &lt;Form onSubmit={handleSubmit(submitAction)}&gt;
 &nbsp;
             {initialContents &amp;&amp; (
@@ -309,18 +313,18 @@ function DogForm({ initialContents, submitAction, buttonLabel = "Create" }) {
             &lt;/Form.Group&gt;
 &nbsp;
             &lt;Form.Group className="mb-3" &gt;
-                &lt;Form.Label htmlFor="breed"&gt;Breed&lt;/Form.Label&gt;
+                &lt;Form.Label htmlFor="description"&gt;Description&lt;/Form.Label&gt;
                 &lt;Form.Control
-                    data-testid={testIdPrefix + "-breed"}
-                    id="breed"
+                    data-testid={testIdPrefix + "-description"}
+                    id="description"
                     type="text"
-                    isInvalid={Boolean(errors.breed)}
-                    {...register("breed", {
-                        required: "Breed is required."
+                    isInvalid={Boolean(errors.description)}
+                    {...register("description", {
+                        required: "Description is required."
                     })}
                 /&gt;
                 &lt;Form.Control.Feedback type="invalid"&gt;
-                    {errors.breed?.message}
+                    {errors.description?.message}
                 &lt;/Form.Control.Feedback&gt;
             &lt;/Form.Group&gt;
 &nbsp;
@@ -344,8 +348,7 @@ function DogForm({ initialContents, submitAction, buttonLabel = "Create" }) {
     )
 }
 &nbsp;
-export default DogForm;
-&nbsp;</pre></td></tr></table></pre>
+export default RestaurantForm;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

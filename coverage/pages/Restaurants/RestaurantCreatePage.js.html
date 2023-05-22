@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for pages/UCSBDates/UCSBDatesIndexPage.js</title>
+    <title>Code coverage report for pages/Restaurants/RestaurantCreatePage.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/UCSBDates</a> UCSBDatesIndexPage.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">pages/Restaurants</a> RestaurantCreatePage.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -87,10 +87,22 @@
 <a name='L22'></a><a href='#L22'>22</a>
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
-<a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a>
-<a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -99,52 +111,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react'
-import { useBackend } from 'main/utils/useBackend';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
+import RestaurantForm from "main/components/Restaurants/RestaurantForm";
+import { useNavigate } from 'react-router-dom'
+import { restaurantUtils } from 'main/utils/restaurantUtils';
 &nbsp;
-import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
-import UCSBDatesTable from 'main/components/UCSBDates/UCSBDatesTable';
-import { useCurrentUser } from 'main/utils/currentUser'
+export default function RestaurantCreatePage() {
 &nbsp;
-export default function UCSBDatesIndexPage() {
+  let navigate = useNavigate(); 
 &nbsp;
-  const currentUser = useCurrentUser();
-&nbsp;
-  const { data: dates, error: _error, status: _status } =
-    useBackend(
-      // Stryker disable next-line all : don't test internal caching of React Query
-      ["/api/ucsbdates/all"],
-      { method: "GET", url: "/api/ucsbdates/all" },
-      []
-    );
+  const onSubmit = async (restaurant) =&gt; {
+    const createdRestaurant = restaurantUtils.add(restaurant);
+    console.log("createdRestaurant: " + JSON.stringify(createdRestaurant));
+    navigate("/restaurants");
+  }  
 &nbsp;
   return (
     &lt;BasicLayout&gt;
       &lt;div className="pt-2"&gt;
-        &lt;h1&gt;UCSBDates&lt;/h1&gt;
-        &lt;UCSBDatesTable dates={dates} currentUser={currentUser} /&gt;
+        &lt;h1&gt;Create New Restaurant&lt;/h1&gt;
+        &lt;RestaurantForm submitAction={onSubmit} /&gt;
       &lt;/div&gt;
     &lt;/BasicLayout&gt;
   )
-}</pre></td></tr></table></pre>
+}
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
