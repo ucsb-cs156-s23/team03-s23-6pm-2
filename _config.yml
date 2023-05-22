@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s23/team03-s23-6pm-2
 owner: ucsb-cs156-s23
 repo_name: team03-s23-6pm-2
-pull_requests: [{"author":{"id":"MDQ6VXNlcjczODIxMTU5","is_bot":false,"login":"RylanPow","name":""},"headRefName":"Rylan-Dog-issues","number":22,"title":"Dog CRUD backend files","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/22"},{"author":{"id":"MDQ6VXNlcjM2NTczMjU5","is_bot":false,"login":"Jacob10383","name":"Jacob"},"headRefName":"Restauraunt-use-backend-calls","number":21,"title":"Restauraunt use backend calls","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/21"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjM2NTczMjU5","is_bot":false,"login":"Jacob10383","name":"Jacob"},"headRefName":"Restauraunt-use-backend-calls","number":21,"title":"Restauraunt use backend calls","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/21"}]
