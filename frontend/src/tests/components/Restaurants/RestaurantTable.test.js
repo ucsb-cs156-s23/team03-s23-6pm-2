@@ -189,6 +189,9 @@ describe("RestaurantTable tests", () => {
   
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toBe(1);
+    });
+    
+    await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toBe('/api/Restaurant');
     });
   

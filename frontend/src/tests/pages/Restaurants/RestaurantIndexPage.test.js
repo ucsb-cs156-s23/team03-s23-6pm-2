@@ -56,7 +56,7 @@ describe("RestaurantIndexPage tests", () => {
         );
     });
 
-    test("renders without crashing for admin ", () => {
+    test("renders without crashing for admin", () => {
         setupAdminUser();
         axiosMock.onGet("/api/Restaurant/all").reply(200, []);
         render(
