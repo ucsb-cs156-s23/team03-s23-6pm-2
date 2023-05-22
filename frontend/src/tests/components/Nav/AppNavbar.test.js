@@ -307,6 +307,54 @@ describe("AppNavbar tests", () => {
         await findByTestId(/appnavbar-restaurants-create/);
     
     });
+
+    test("user view: book menu displayed correctly", async () => {
+
+        const currentUser = currentUserFixtures.userOnly;
+        const systemInfo = systemInfoFixtures.showingBoth;
+    
+        const doLogin = jest.fn();
+    
+        const { getByTestId, findByTestId } = render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} systemInfo={systemInfo} doLogin={doLogin} />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+    
+        await findByTestId("appnavbar-books-dropdown");
+        const dropdown = getByTestId("appnavbar-books-dropdown");
+        const aElement = dropdown.querySelector("a");
+        expect(aElement).toBeInTheDocument();
+        aElement?.click();
+        await findByTestId("appnavbar-books-list");
+    
+    });
+    
+    test("admin view: book menu displayed correctly", async () => {
+    
+        const currentUser = currentUserFixtures.adminUser;
+        const systemInfo = systemInfoFixtures.showingBoth;
+    
+        const doLogin = jest.fn();
+    
+        const { getByTestId, findByTestId } = render(
+            <QueryClientProvider client={queryClient}>
+                <MemoryRouter>
+                    <AppNavbar currentUser={currentUser} systemInfo={systemInfo} doLogin={doLogin} />
+                </MemoryRouter>
+            </QueryClientProvider>
+        );
+    
+        await findByTestId("appnavbar-books-dropdown");
+        const dropdown = getByTestId("appnavbar-books-dropdown");
+        const aElement = dropdown.querySelector("a");
+        expect(aElement).toBeInTheDocument();
+        aElement?.click();
+        await findByTestId(/appnavbar-books-create/);
+    
+    });
 });
 
 

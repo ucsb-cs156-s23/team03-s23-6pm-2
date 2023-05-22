@@ -20,6 +20,10 @@ import DogsEditPage from "main/pages/Dogs/DogsEditPage";
 import DogDetailsPage from "main/pages/Dogs/DogDetailsPage";
 import DogIndexPage from "main/pages/Dogs/DogIndexPage";
 
+import BookCreatePage from "main/pages/Books/BookCreatePage";
+import BookEditPage from "main/pages/Books/BookEditPage";
+import BookIndexPage from "main/pages/Books/BookIndexPage";
+import BookDetailsPage from "main/pages/Books/BookDetailsPage";
 
 import { hasRole, useCurrentUser } from "main/utils/currentUser";
 
@@ -88,6 +92,24 @@ function App() {
               <Route exact path="/dogs/create" element={<DogsCreatePage />} />
               <Route exact path="/dogs/edit/:id" element={<DogsEditPage />} />
               <Route exact path="/dogs/details/:id" element={<DogDetailsPage />} />
+            </>
+          )
+        }
+
+{
+          hasRole(currentUser, "ROLE_USER") && (
+            <>
+              <Route exact path="/books/list" element={<BookIndexPage />} />
+              <Route exact path="/books/" element={<BookIndexPage />} />
+            </>
+          )
+        }
+        {
+          hasRole(currentUser, "ROLE_ADMIN") && (
+            <>
+              <Route exact path="/books/create" element={<BookCreatePage />} />
+              <Route exact path="/books/edit/:id" element={<BookEditPage />} />
+              <Route exact path="/books/details/:id" element={<BookDetailsPage />} />
             </>
           )
         }
