@@ -32,6 +32,7 @@ function App() {
         <Route exact path="/" element={<HomePage />} />
         <Route exact path="/profile" element={<ProfilePage />} />
 
+
         {
           hasRole(currentUser, "ROLE_ADMIN") && <Route exact path="/admin/users" element={<AdminUsersPage />} />
         }
@@ -60,7 +61,8 @@ function App() {
             </>
           )
         }
-        {
+
+{
           hasRole(currentUser, "ROLE_USER") && (
             <>
               <Route exact path="/dogs/list" element={<DogIndexPage />} />
