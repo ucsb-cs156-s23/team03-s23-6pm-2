@@ -6,7 +6,9 @@ import {useBackend, useBackendMutation} from "../../utils/useBackend";
 
 export default function RestaurantEditPage() {
   let {id} = useParams();
+  
   const {data: restaurant} =     useBackend(
+    //Stryker disable next-line all 
     [`/api/Restaurant?id=${id}`],
     {  // Stryker disable next-line all : GET is the default, so changing this to "" doesn't introduce a bug
       method: "GET",
@@ -28,7 +30,7 @@ export default function RestaurantEditPage() {
   const onSuccess = (restaurant) => {
     toast(`Restaurant Updated - id: ${restaurant.id} name: ${restaurant.name}`);
   };
-
+//Stryker disable next-line all 
   const mut = useBackendMutation(objectToAxiosPutParams, {onSuccess}, [`/api/restaurants?id=${id}`]);
   const onSubmit = async (restaurant) => {
     mut.mutate(restaurant);

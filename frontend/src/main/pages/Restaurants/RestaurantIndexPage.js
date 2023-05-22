@@ -7,11 +7,14 @@ import { useBackend } from "../../utils/useBackend";
 import { useCurrentUser } from "../../utils/currentUser";
 
 export default function RestaurantIndexPage() {
+  // Stryker disable all : don't test internal caching of React Query
   const { data: restaurants } =     useBackend(
+  
     ["Get all restaurants"],
     {method: "GET", url: "/api/Restaurant/all"},
     []
   );;
+  // Stryker enable all
   const currentUser = useCurrentUser();
 
   return (

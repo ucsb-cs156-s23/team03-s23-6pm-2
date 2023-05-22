@@ -23,10 +23,11 @@ export default function RestaurantTable({
       id: cell.row.values.id,
     },
   });
-
+  // Stryker disable all : don't test internal caching of React Query
   const deleteMutation = useBackendMutation(createAxiosParams, { onSuccess: handleDeleteSuccess }, [
     "/api/Restaurant/all",
   ]);
+  // Stryker enable all 
 
   const handleDelete = async (cell) => {
     deleteMutation.mutate(cell);

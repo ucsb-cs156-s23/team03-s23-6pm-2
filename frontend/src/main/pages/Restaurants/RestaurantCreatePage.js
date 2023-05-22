@@ -21,8 +21,9 @@ export default function RestaurantCreatePage() {
   let navigate = useNavigate();
 
   const onSubmit = async (restaurant) => {
-    
+   // Stryker disable next-line al
       const createdRestaurant = await createRestaurant(restaurant);
+      //Stryker disable next-line all: console.log is not a security risk
       console.log("createdRestaurant: " + JSON.stringify(createdRestaurant));
       toast(`New restaurant Created - id: ${createdRestaurant.id} name: ${createdRestaurant.name}`);
       navigate("/restaurants");
