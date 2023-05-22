@@ -1,52 +1,45 @@
 import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router-dom";
-import { useBackendMutation } from "main/utils/useBackend";
+import { useBackendMutation } from "../../utils/useBackend";
+import { hasRole } from "../../utils/currentUser";
 import { toast } from "react-toastify";
-
-const showCell = (cell) => JSON.stringify(cell.row.values);
 
 export default function RestaurantTable({
   restaurants,
   showButtons = true,
   testIdPrefix = "RestaurantTable",
+  currentUser = null,
 }) {
-  const navigate = useNavigate();
-
-  const onDeleteSuccess = message => {
+  const handleDeleteSuccess = (message) => {
     console.log(message);
-    toast.success(`Restaurant successfully deleted`);
-
+    toast(message);
   };
 
-  const objectToAxiosParams = function (cell) {
-    return {
-      url: "/api/Restaurant",
-      method: "DELETE",
-      params: {
-        id: cell.row.values.id
-      }
-    };
-  };
+  const createAxiosParams = (cell) => ({
+    url: "/api/Restaurant",
+    method: "DELETE",
+    params: {
+      id: cell.row.values.id,
+    },
+  });
 
-  const deleteMutation = useBackendMutation(
-    objectToAxiosParams,
-    { onSuccess: onDeleteSuccess },
-    ["/api/Restaurant/all"]
-  );
+  const deleteMutation = useBackendMutation(createAxiosParams, { onSuccess: handleDeleteSuccess }, [
+    "/api/Restaurant/all",
+  ]);
 
-  const deleteCallback = async (cell) => {
+  const handleDelete = async (cell) => {
     deleteMutation.mutate(cell);
   };
 
-  const editCallback = (cell) => {
-    console.log(`editCallback: ${showCell(cell)})}`);
-    navigate(`/Restaurants/edit/${cell.row.values.id}`);
+  const navigate = useNavigate();
+
+  const handleEdit = (cell) => {
+    navigate(`/restaurants/edit/${cell.row.values.id}`);
   };
 
-  const detailsCallback = (cell) => {
-    console.log(`detailsCallback: ${showCell(cell)})}`);
-    navigate(`/Restaurants/details/${cell.row.values.id}`);
+  const handleDetails = (cell) => {
+    navigate(`/restaurants/details/${cell.row.values.id}`);
   };
 
   const columns = [
@@ -62,24 +55,23 @@ export default function RestaurantTable({
       Header: "Description",
       accessor: "description",
     },
+    {
+      Header: "Address",
+      accessor: "address",
+    },
   ];
 
-  const buttonColumns = [
-    ...columns,
-    ButtonColumn("Details", "primary", detailsCallback, testIdPrefix),
-    ButtonColumn("Edit", "primary", editCallback, testIdPrefix),
-    ButtonColumn("Delete", "danger", deleteCallback, testIdPrefix),
-  ];
-
-  const columnsToDisplay = showButtons ? buttonColumns : columns;
+  if (showButtons) {
+    columns.push(ButtonColumn("Details", "primary", handleDetails, testIdPrefix));
+    if (hasRole(currentUser, "ROLE_ADMIN")) {
+      columns.push(
+        ButtonColumn("Edit", "primary", handleEdit, testIdPrefix),
+        ButtonColumn("Delete", "danger", handleDelete, testIdPrefix)
+      );
+    }
+  }
 
   return (
-    <OurTable
-      data={restaurants}
-      columns={columnsToDisplay}
-      testid={testIdPrefix}
-    />
+    <OurTable data={restaurants} columns={columns} testid={testIdPrefix} />
   );
 }
-
-export { showCell };
