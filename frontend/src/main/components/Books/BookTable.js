@@ -1,68 +1,80 @@
 import React from "react";
 import OurTable, { ButtonColumn } from "main/components/OurTable";
 import { useNavigate } from "react-router-dom";
-import { bookUtils } from "main/utils/bookUtils";
-
-const showCell = (cell) => JSON.stringify(cell.row.values);
-
-
-const defaultDeleteCallback = async (cell) => {
-    console.log(`deleteCallback: ${showCell(cell)})`);
-    bookUtils.del(cell.row.values.id);
-}
+import { useBackendMutation } from "../../utils/useBackend";
+import { toast } from "react-toastify";
+import { hasRole } from "main/utils/currentUser";
 
 export default function BookTable({
-    books,
-    deleteCallback = defaultDeleteCallback,
-    showButtons = true,
-    testIdPrefix = "BookTable" }) {
+  books,
+  showButtons = true,
+  testIdPrefix = "BookTable",
+  currentUser = null,
+}) {
 
-    const navigate = useNavigate();
+  const handleDeleteSuccess = (message) => {
+    console.log(message);
+    toast(message);
+  };
 
-    const editCallback = (cell) => {
-        console.log(`editCallback: ${showCell(cell)})`);
-        navigate(`/books/edit/${cell.row.values.id}`)
+  const createAxiosParams = (cell) => ({
+    url: "/api/books",
+    method: "DELETE",
+    params: {
+      id: cell.row.values.id,
+    },
+  });
+  // Stryker disable all : don't test internal caching of React Query
+  const deleteMutation = useBackendMutation(createAxiosParams, { onSuccess: handleDeleteSuccess }, [
+    "/api/books/all",
+  ]);
+  // Stryker enable all 
+
+  const handleDelete = async (cell) => {
+    deleteMutation.mutate(cell);
+    window.location.reload();
+  };
+
+  const navigate = useNavigate();
+
+  const handleEdit = (cell) => {
+    navigate(`/books/edit/${cell.row.values.id}`);
+  };
+
+  const handleDetails = (cell) => {
+    navigate(`/books/details/${cell.row.values.id}`);
+  };
+
+  const columns = [
+    {
+      Header: "Id",
+      accessor: "id",
+    },
+    {
+      Header: "Title",
+      accessor: "title",
+    },
+    {
+      Header: "Author",
+      accessor: "author",
+    },
+    {
+        Header: "Year",
+        accessor: "year",
+    },
+  ];
+
+  if (showButtons) {
+    columns.push(ButtonColumn("Details", "primary", handleDetails, testIdPrefix));
+    if (hasRole(currentUser, "ROLE_ADMIN")) {
+      columns.push(
+        ButtonColumn("Edit", "primary", handleEdit, testIdPrefix),
+        ButtonColumn("Delete", "danger", handleDelete, testIdPrefix)
+      );
     }
+  }
 
-    const detailsCallback = (cell) => {
-        console.log(`detailsCallback: ${showCell(cell)})`);
-        navigate(`/books/details/${cell.row.values.id}`)
-    }
-
-    const columns = [
-        {
-            Header: 'id',
-            accessor: 'id', // accessor is the "key" in the data
-        },
-
-        {
-            Header: 'Title',
-            accessor: 'title',
-        },
-        {
-            Header: 'Author',
-            accessor: 'author',
-        },
-        {
-            Header: 'Year',
-            accessor: 'year',
-        }
-    ];
-
-    const buttonColumns = [
-        ...columns,
-        ButtonColumn("Details", "primary", detailsCallback, testIdPrefix),
-        ButtonColumn("Edit", "primary", editCallback, testIdPrefix),
-        ButtonColumn("Delete", "danger", deleteCallback, testIdPrefix),
-    ]
-
-    const columnsToDisplay = showButtons ? buttonColumns : columns;
-
-    return <OurTable
-        data={books}
-        columns={columnsToDisplay}
-        testid={testIdPrefix}
-    />;
-};
-
-export { showCell };
+  return (
+    <OurTable data={books} columns={columns} testid={testIdPrefix} />
+  );
+}
