@@ -15,8 +15,8 @@ import RestaurantEditPage from "main/pages/Restaurants/RestaurantEditPage";
 import RestaurantIndexPage from "main/pages/Restaurants/RestaurantIndexPage";
 import RestaurantDetailsPage from "main/pages/Restaurants/RestaurantDetailsPage";
 
-import DogsCreatePage from "main/pages/Dogs/DogsCreatePage";
-import DogsEditPage from "main/pages/Dogs/DogsEditPage";
+import DogsCreatePage from "main/pages/Dogs/DogCreatePage";
+import DogsEditPage from "main/pages/Dogs/DogEditPage";
 import DogDetailsPage from "main/pages/Dogs/DogDetailsPage";
 import DogIndexPage from "main/pages/Dogs/DogIndexPage";
 
@@ -82,7 +82,7 @@ function App() {
 {
           hasRole(currentUser, "ROLE_USER") && (
             <>
-              <Route exact path="/dogs/list" element={<DogIndexPage />} />
+              <Route exact path="/dogs" element={<DogIndexPage />} />
             </>
           )
         }

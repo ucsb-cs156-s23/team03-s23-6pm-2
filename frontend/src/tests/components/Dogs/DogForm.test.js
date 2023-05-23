@@ -53,8 +53,8 @@ describe("DogForm tests", () => {
             expect(header).toBeInTheDocument();
         });
 
-        expect(await screen.findByTestId(`${testId}-id`)).toBeInTheDocument();
-        expect(screen.getByText(`Id`)).toBeInTheDocument();
+        expect(await screen.findByTestId(`${testId}-name`)).toBeInTheDocument();
+        expect(screen.getByText(`Name`)).toBeInTheDocument();
     });
 
 

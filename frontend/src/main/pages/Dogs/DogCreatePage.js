@@ -1,16 +1,23 @@
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import DogForm from "main/components/Dogs/DogForm";
 import { useNavigate } from 'react-router-dom'
-import { dogUtils } from 'main/utils/dogUtils';
+import axios from "axios";
+import { toast } from 'react-toastify';
 
 export default function DogsCreatePage() {
 
   let navigate = useNavigate(); 
 
   const onSubmit = async (dog) => {
-    const createdDog = dogUtils.add(dog);
-    console.log("createdDog: " + JSON.stringify(createdDog));
-    navigate("/dogs/list");
+    const res = await axios.post("/api/dogs/post", null, {
+      params: {
+        name: dog.name,
+        breed: dog.breed,
+      },
+    });
+    const createdDog = res.data;
+    toast(`New dog Created - name: ${createdDog.name} breed: ${createdDog.breed}`);
+    navigate("/dogs");
   }  
 
   return (

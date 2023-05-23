@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-import DogsCreatePage from "main/pages/Dogs/DogsCreatePage";
+import DogsCreatePage from "main/pages/Dogs/DogCreatePage";
 
 export default {
     title: 'pages/Dogs/DogsCreatePage',

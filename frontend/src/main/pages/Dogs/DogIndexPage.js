@@ -16,7 +16,7 @@ export default function DogIndexPage() {
     const deleteCallback = async (cell) => {
         console.log(`DogIndexPage deleteCallback: ${showCell(cell)})`);
         dogUtils.del(cell.row.values.id);
-        navigate("/dogs/list");
+        navigate("/dogs");
     }
 
     return (
