@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
@@ -94,8 +94,7 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -103,20 +102,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,42 +129,41 @@
 import Button from 'react-bootstrap/Button';
 import BasicLayout from "main/layouts/BasicLayout/BasicLayout";
 import DogTable from 'main/components/Dogs/DogTable';
-import { dogUtils } from 'main/utils/dogUtils';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useBackend } from 'main/utils/useBackend';
+import { useCurrentUser } from 'main/utils/currentUser';
 &nbsp;
 export default function DogIndexPage() {
-    const navigate = useNavigate();
+  // Stryker disable all : don't test internal caching of React Query
+  const { data: dogs } = useBackend(
+  
+    ["Get all dogs"],
+    {method: "GET", url: "/api/dogs/all"},
+    []
+  );;
+  // Stryker enable all
+  const currentUser = useCurrentUser();
 &nbsp;
-    const dogCollection = dogUtils.get();
-    const dogs = dogCollection.dogs;
-&nbsp;
-    const showCell = (cell) =&gt; JSON.stringify(cell.row.values);
-&nbsp;
-    const deleteCallback = async (cell) =&gt; {
-        console.log(`DogIndexPage deleteCallback: ${showCell(cell)})`);
-        dogUtils.del(cell.row.values.id);
-        navigate("/dogs/list");
-    }
-&nbsp;
-    return (
-        &lt;BasicLayout&gt;
-            &lt;div className="pt-2"&gt;
-                &lt;Button style={{ float: "right" }} as={Link} to="/dogs/create"&gt;
-                    Create Dog
-                &lt;/Button&gt;
-                &lt;h1&gt;Dogs&lt;/h1&gt;
-                &lt;DogTable dogs={dogs} deleteCallback={deleteCallback} /&gt;
-            &lt;/div&gt;
-        &lt;/BasicLayout&gt;
-    )
-}</pre></td></tr></table></pre>
+  return (
+    &lt;BasicLayout&gt;
+      &lt;div className="pt-2"&gt;
+        &lt;Button style={{ float: "right" }} as={Link} to="/dogs/create"&gt;
+          Create Dog
+        &lt;/Button&gt;
+        &lt;h1&gt;Dogs&lt;/h1&gt;
+        &lt;DogTable dogs={dogs} currentUser={currentUser} /&gt;
+      &lt;/div&gt;
+    &lt;/BasicLayout&gt;
+  )
+}
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon May 22 2023 19:39:04 GMT-0700 (Pacific Daylight Time)
+                at Mon May 22 2023 20:22:26 GMT-0700 (Pacific Daylight Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>
