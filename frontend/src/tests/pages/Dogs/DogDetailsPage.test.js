@@ -13,7 +13,7 @@ jest.mock('react-router-dom', () => {
     __esModule: true,
     ...originalModule,
     useParams: () => ({
-      name: "Annie"
+      id: 2
     }),
   };
 });
@@ -30,7 +30,7 @@ describe("DogDetailsPage tests", () => {
   });
 
   test("renders headers only when backend doesn't return a dog", async () => {
-    axiosMock.onGet("/api/dogs", {params: { name: "Annie" }}).timeout();
+    axiosMock.onGet("/api/dogs", {params: { id: 2 }}).timeout();
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
@@ -39,7 +39,7 @@ describe("DogDetailsPage tests", () => {
       </QueryClientProvider>
     );
     await screen.findByText("Dog Details");
-    const expectedHeaders = ["name", "breed"];
+    const expectedHeaders = ["id", "name", "breed"];
     expectedHeaders.forEach((header) => {
       expect(screen.getByTestId(`DogTable-header-${header}`)).toBeInTheDocument();
     });
@@ -48,7 +48,8 @@ describe("DogDetailsPage tests", () => {
 
   describe("when backend returns a dog", () => {
     beforeEach(() => {
-      axiosMock.onGet("/api/dogs", {params: { name: "Annie" }}).reply(200, {
+      axiosMock.onGet("/api/dogs", {params: { id: 2 }}).reply(200, {
+        id: 2,
         name: "Annie",
         breed: "Poodle",
       });

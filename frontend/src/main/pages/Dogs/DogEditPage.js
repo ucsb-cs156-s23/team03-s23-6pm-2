@@ -8,16 +8,16 @@ import { toast } from "react-toastify";
 
 
 export default function DogEditPage() {
-  let { name } = useParams();
+  let { id } = useParams();
 
   const { data: dog } = useBackend(
     // Stryker disable next-line all : don't test internal caching of React Query
-    [`/api/dogs?name=${name}`],
+    [`/api/dogs?id=${id}`],
     {  // Stryker disable next-line all : GET is the default, so changing this to "" doesn't introduce a bug
       method: "GET",
       url: `/api/dogs`,
       params: {
-        name
+        id
       }
     }
   );
@@ -26,7 +26,7 @@ export default function DogEditPage() {
     url: "/api/dogs",
     method: "PUT",
     params: {
-      name: dog.name,
+      id: id,
     },
     data: {
       name: dog.name,
@@ -35,14 +35,14 @@ export default function DogEditPage() {
   });
 
   const onSuccess = (dog) => {
-    toast(`Dog Updated - name: ${dog.name} breed: ${dog.breed}`);
+    toast(`Dog Updated - id: ${id} name: ${dog.name}`);
   }
 
   const mutation = useBackendMutation(
     axiosPutParams,
     { onSuccess },
     // Stryker disable next-line all : hard to set up test for caching
-    [`/api/dogs?name=${name}`]
+    [`/api/dogs?id=${id}`]
   );
 
   const { isSuccess } = mutation

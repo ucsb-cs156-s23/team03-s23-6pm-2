@@ -21,6 +21,20 @@ function DogForm({ initialContents, submitAction, buttonLabel = "Create" }) {
     return (
         <Form onSubmit={handleSubmit(submitAction)}>
 
+            {initialContents && (
+                <Form.Group className="mb-3" >
+                    <Form.Label htmlFor="id">Id</Form.Label>
+                    <Form.Control
+                        data-testid={testIdPrefix + "-id"}
+                        id="id"
+                        type="text"
+                        {...register("id")}
+                        value={initialContents.id}
+                        disabled
+                    />
+                </Form.Group>
+            )}
+
             <Form.Group className="mb-3" >
                 <Form.Label htmlFor="name">Name</Form.Label>
                 <Form.Control

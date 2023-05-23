@@ -52,6 +52,7 @@ describe('DogCreatePage tests', () => {
 
   test('when filled in and submitted, makes request to backend and redirects to index page', async () => {
     const dog = {
+      id: 3,
       name: 'Max',
       breed: 'Yorkie',
     };
@@ -90,7 +91,7 @@ describe('DogCreatePage tests', () => {
       id: undefined,
     });
 
-    expect(mockToast).toHaveBeenCalledWith('New dog Created - name: Max breed: Yorkie');
+    expect(mockToast).toHaveBeenCalledWith('New dog Created - id: 3 name: Max');
     expect(mockNavigate).toHaveBeenCalledWith('/dogs');
   });
 });

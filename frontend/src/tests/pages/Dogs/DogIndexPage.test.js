@@ -143,7 +143,7 @@ describe("DogIndexPage tests", () => {
         );
         restoreConsole();
 
-        expect(screen.queryByTestId(`${testId}-cell-row-0-name`)).not.toBeInTheDocument();
+        expect(screen.queryByTestId(`${testId}-cell-row-0-id`)).not.toBeInTheDocument();
     });
 
 });

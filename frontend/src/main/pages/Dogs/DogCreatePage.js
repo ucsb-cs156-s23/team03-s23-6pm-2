@@ -11,12 +11,13 @@ export default function DogsCreatePage() {
   const onSubmit = async (dog) => {
     const res = await axios.post("/api/dogs/post", null, {
       params: {
+        id: dog.id,
         name: dog.name,
         breed: dog.breed,
       },
     });
     const createdDog = res.data;
-    toast(`New dog Created - name: ${createdDog.name} breed: ${createdDog.breed}`);
+    toast(`New dog Created - id: ${createdDog.id} name: ${createdDog.name}`);
     navigate("/dogs");
   }  
 

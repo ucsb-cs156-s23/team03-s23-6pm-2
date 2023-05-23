@@ -21,7 +21,7 @@ export default function DogTable({
     url: "/api/dogs",
     method: "DELETE",
     params: {
-      name: cell.row.values.name,
+      id: cell.row.values.id,
     },
   });
   // Stryker disable all : don't test internal caching of React Query
@@ -38,14 +38,18 @@ export default function DogTable({
   const navigate = useNavigate();
 
   const handleEdit = (cell) => {
-    navigate(`/dogs/edit/${cell.row.values.name}`);
+    navigate(`/dogs/edit/${cell.row.values.id}`);
   };
 
   const handleDetails = (cell) => {
-    navigate(`/dogs/details/${cell.row.values.name}`);
+    navigate(`/dogs/details/${cell.row.values.id}`);
   };
 
   const columns = [
+    {
+      Header: "Id",
+      accessor: "id",
+    },
     {
       Header: "Name",
       accessor: "name",

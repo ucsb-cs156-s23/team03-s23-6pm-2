@@ -27,8 +27,8 @@ jest.mock('react-toastify', () => {
 
 describe("DogTable tests", () => {
   const queryClient = new QueryClient();
-  const expectedHeaders = ["Name", "Breed"];
-  const expectedFields = ["name", "breed"];
+  const expectedHeaders = ["Id", "Name", "Breed"];
+  const expectedFields = ["id", "name", "breed"];
   const testId = "DogTable";
 
   const renderTable = (dogs, currentUser) => {
@@ -76,11 +76,11 @@ describe("DogTable tests", () => {
        expect(header).toBeInTheDocument();
      });
  
+     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("2");
      expect(screen.getByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
-     expect(screen.getByTestId(`${testId}-cell-row-0-col-breed`)).toHaveTextContent("Poodle");
  
+     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("3");
      expect(screen.getByTestId(`${testId}-cell-row-1-col-name`)).toHaveTextContent("Tom");
-     expect(screen.getByTestId(`${testId}-cell-row-1-col-breed`)).toHaveTextContent("German Shepherd");
  
      const detailsButton = screen.getByTestId(`${testId}-cell-row-0-col-Details-button`);
      expect(detailsButton).toBeInTheDocument();
@@ -118,19 +118,16 @@ describe("DogTable tests", () => {
        expect(header).toBeInTheDocument();
      });
  
+     expect(screen.getByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("2");
      expect(screen.getByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
-     expect(screen.getByTestId(`${testId}-cell-row-0-col-breed`)).toHaveTextContent("Poodle");
  
+     expect(screen.getByTestId(`${testId}-cell-row-1-col-id`)).toHaveTextContent("3");
      expect(screen.getByTestId(`${testId}-cell-row-1-col-name`)).toHaveTextContent("Tom");
-     expect(screen.getByTestId(`${testId}-cell-row-1-col-breed`)).toHaveTextContent("German Shepherd");
  
      expect(screen.queryByText("Delete")).not.toBeInTheDocument();
      expect(screen.queryByText("Edit")).not.toBeInTheDocument();
      expect(screen.queryByText("Details")).not.toBeInTheDocument();
    });
-
- 
-
 
    test("Edit button navigates to the edit page for admin user", async () => {
     const currentUser = currentUserFixtures.adminUser;
@@ -138,15 +135,15 @@ describe("DogTable tests", () => {
   
     renderTable(dogs, currentUser);
   
-    expect(await screen.findByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-breed`)).toHaveTextContent("Poodle");
+    expect(await screen.findByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("2");
+    expect(screen.getByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
   
     const editButton = screen.getByTestId(`${testId}-cell-row-0-col-Edit-button`);
     expect(editButton).toBeInTheDocument();
   
     fireEvent.click(editButton);
   
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/dogs/edit/Annie'));
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/dogs/edit/2'));
   });
 
   test("Details button navigates to the details page", async () => {
@@ -154,30 +151,30 @@ describe("DogTable tests", () => {
   
     renderTable(dogs);
   
-    expect(await screen.findByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-breed`)).toHaveTextContent("Poodle");
+    expect(await screen.findByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("2");
+    expect(screen.getByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
   
     const detailsButton = screen.getByTestId(`${testId}-cell-row-0-col-Details-button`);
     expect(detailsButton).toBeInTheDocument();
   
     fireEvent.click(detailsButton);
   
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/dogs/details/Annie'));
+    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/dogs/details/2'));
   });
 
   const axiosMock = new AxiosMockAdapter(axios);
 
   test("Delete button calls delete callback", async () => {
     const restoreConsole = mockConsole();
-    axiosMock.onDelete('/api/dogs', {params: {name: "Annie"}}).reply(200, "Dog with name Annie was deleted");
+    axiosMock.onDelete('/api/dogs', {params: { id: 2 }}).reply(200, "Dog with id 2 was deleted");
 
     const currentUser = currentUserFixtures.adminUser;
     const dogs = dogFixtures.threeDogs;
   
     renderTable(dogs, currentUser);
   
-    expect(await screen.findByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
-    expect(screen.getByTestId(`${testId}-cell-row-0-col-breed`)).toHaveTextContent("Poodle");
+    expect(await screen.findByTestId(`${testId}-cell-row-0-col-id`)).toHaveTextContent("2");
+    expect(screen.getByTestId(`${testId}-cell-row-0-col-name`)).toHaveTextContent("Annie");
   
     const deleteButton = screen.getByTestId(`${testId}-cell-row-0-col-Delete-button`);
     expect(deleteButton).toBeInTheDocument();
@@ -193,7 +190,7 @@ describe("DogTable tests", () => {
     });
   
     expect(console.log).toHaveBeenCalled();
-    expect(mockToast).toHaveBeenCalledWith("Dog with name Annie was deleted");
+    expect(mockToast).toHaveBeenCalledWith("Dog with id 2 was deleted");
   
     restoreConsole();
   });

@@ -24,7 +24,7 @@ jest.mock("react-router-dom", () => {
     __esModule: true,
     ...originalModule,
     useParams: () => ({
-      name: "Max",
+      id: 3,
     }),
     Navigate: (x) => {
       mockNavigate(x);
@@ -46,7 +46,7 @@ describe("EditDogPage tests", () => {
 
   describe("when API does not return a dog", () => {
     test("renders headline only", async () => {
-      axiosMock.onGet("/api/dogs", { params: { name: "Max" } }).timeout();
+      axiosMock.onGet("/api/dogs", { params: { id: 3 } }).timeout();
 
       render(
         <QueryClientProvider client={queryClient}>
@@ -57,15 +57,16 @@ describe("EditDogPage tests", () => {
       );
 
       await screen.findByText("Edit dog");
-      expect(screen.queryByTestId("DogForm-name")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("DogForm-id")).not.toBeInTheDocument();
     });
   });
 
   describe("functional API", () => {
     beforeEach(() => {
-      axiosMock.onGet("/api/dogs", { params: { name: "Max" } }).reply(200, {
+      axiosMock.onGet("/api/dogs", { params: { id: 3 } }).reply(200, {
         name: "Max",
         breed: "Yorkie",
+        id: 3,
       });
     });
 
@@ -89,8 +90,8 @@ describe("EditDogPage tests", () => {
       );
 
       await waitFor(() => {
-        const nameField = screen.getByTestId("DogForm-name");
-        expect(nameField).toHaveValue("Max");
+        const idField = screen.getByTestId("DogForm-id");
+        expect(idField).toHaveValue("3");
       });
 
       const nameInput = screen.getByLabelText("Name");
@@ -104,6 +105,7 @@ describe("EditDogPage tests", () => {
 
     test("on form submit, calls API and navigates to dog list", async () => {
       axiosMock.onPut("/api/dogs").reply(200, {
+        id: "3",
         name: "Max",
         breed: "Yorkie",
       });
@@ -117,8 +119,8 @@ describe("EditDogPage tests", () => {
       );
 
       await waitFor(async () => {
-        const nameField = await screen.findByTestId("DogForm-name");
-        expect(nameField).toHaveValue("Max");
+        const idField = await screen.findByTestId("DogForm-id");
+        expect(idField).toHaveValue("3");
       });
 
       const nameInput = screen.getByLabelText("Name");
@@ -136,7 +138,7 @@ describe("EditDogPage tests", () => {
 
       await waitFor(() =>
         expect(mockToast).toHaveBeenCalledWith(
-          "Dog Updated - name: Max breed: Yorkie"
+          "Dog Updated - id: 3 name: Max"
         )
       );
       await waitFor(() =>
@@ -146,7 +148,7 @@ describe("EditDogPage tests", () => {
       );
 
       expect(axiosMock.history.put.length).toBe(1);
-      expect(axiosMock.history.put[0].params).toEqual({ name: "Max" });
+      expect(axiosMock.history.put[0].params).toEqual({ id: 3});
       expect(axiosMock.history.put[0].data).toBe(
         JSON.stringify({
           name: "Max",

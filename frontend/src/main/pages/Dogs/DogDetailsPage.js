@@ -4,16 +4,16 @@ import DogTable from 'main/components/Dogs/DogTable';
 import {useBackend} from "../../utils/useBackend";
 
 export default function DogDetailsPage() {
-  let { name } = useParams();
+  let { id } = useParams();
 
   const { data: dog } =
     useBackend(
       // Stryker disable next-line all : don't test internal caching of React Query
-      [`/api/dogs?name=${name}`],
+      [`/api/dogs?id=${id}`],
       {  // Stryker disable next-line all : GET is the default, so changing this to "" doesn't introduce a bug
         method: "GET",
         url: `/api/dogs`,
-        params: {name}
+        params: {id}
       }
     );
 
