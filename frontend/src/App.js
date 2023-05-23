@@ -90,8 +90,8 @@ function App() {
           hasRole(currentUser, "ROLE_ADMIN") && (
             <>
               <Route exact path="/dogs/create" element={<DogsCreatePage />} />
-              <Route exact path="/dogs/edit/:id" element={<DogsEditPage />} />
-              <Route exact path="/dogs/details/:id" element={<DogDetailsPage />} />
+              <Route exact path="/dogs/edit/:name" element={<DogsEditPage />} />
+              <Route exact path="/dogs/details/:name" element={<DogDetailsPage />} />
             </>
           )
         }
