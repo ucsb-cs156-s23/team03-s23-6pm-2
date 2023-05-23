@@ -1,29 +1,46 @@
-import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
+import { render, waitFor, fireEvent } from "@testing-library/react";
 import BookCreatePage from "main/pages/Books/BookCreatePage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import mockConsole from "jest-mock-console";
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: () => mockNavigate
-}));
+import { apiCurrentUserFixtures } from "fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import axios from "axios";
+import AxiosMockAdapter from "axios-mock-adapter";
 
-const mockAdd = jest.fn();
-jest.mock('main/utils/bookUtils', () => {
+const mockToast = jest.fn();
+jest.mock('react-toastify', () => {
+    const originalModule = jest.requireActual('react-toastify');
     return {
         __esModule: true,
-        bookUtils: {
-            add: () => { return mockAdd(); }
-        }
-    }
+        ...originalModule,
+        toast: (x) => mockToast(x)
+    };
+});
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => {
+    const originalModule = jest.requireActual('react-router-dom');
+    return {
+        __esModule: true,
+        ...originalModule,
+        Navigate: (x) => { mockNavigate(x); return null; }
+    };
 });
 
 describe("BookCreatePage tests", () => {
 
-    const queryClient = new QueryClient();
+    const axiosMock = new AxiosMockAdapter(axios);
+
+    beforeEach(() => {
+        axiosMock.reset();
+        axiosMock.resetHistory();
+        axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
+        axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+    });
+
     test("renders without crashing", () => {
+        const queryClient = new QueryClient();
         render(
             <QueryClientProvider client={queryClient}>
                 <MemoryRouter>
@@ -33,60 +50,57 @@ describe("BookCreatePage tests", () => {
         );
     });
 
-    test("redirects to /books on submit", async () => {
+    test("when you fill in the form and hit submit, it makes a request to the backend", async () => {
 
-        const restoreConsole = mockConsole();
+        const queryClient = new QueryClient();
+        const book = {
+            id: 17,
+            title: "Harry Potter and the Chamber of Secrets", 
+            author: "JK Rowling",
+            year: "1998",
+        };
 
-        mockAdd.mockReturnValue({
-            "book": {
-                id: 3,
-                title: "The Kite Runner",
-                author: "Khaled Hosseini",
-                year: "2003"
-            }
-        });
+        axiosMock.onPost("/api/books/post").reply(202, book);
 
-        render(
+        const { getByTestId } = render(
             <QueryClientProvider client={queryClient}>
                 <MemoryRouter>
                     <BookCreatePage />
                 </MemoryRouter>
             </QueryClientProvider>
-        )
+        );
 
-        const titleInput = screen.getByLabelText("Title");
-        expect(titleInput).toBeInTheDocument();
-
-        const authorInput = screen.getByLabelText("Author");
-        expect(authorInput).toBeInTheDocument();
-
-        const yearInput = screen.getByLabelText("Year");
-        expect(yearInput).toBeInTheDocument();
-
-        const createButton = screen.getByText("Create");
-        expect(createButton).toBeInTheDocument();
-
-        await act(async () => {
-            fireEvent.change(titleInput, { target: { value: 'The Kite Runner' } })
-            fireEvent.change(authorInput, { target: { value: 'Khaled Hosseini' } })
-            fireEvent.change(yearInput, { target: { value: '2003' } })
-            fireEvent.click(createButton);
+        await waitFor(() => {
+            expect(getByTestId("BookForm-title")).toBeInTheDocument();
         });
 
-        await waitFor(() => expect(mockAdd).toHaveBeenCalled());
-        await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/books"));
+        const titleField = getByTestId("BookForm-title");
+        const authorField = getByTestId("BookForm-author");
+        const yearField = getByTestId("BookForm-year");
+        const submitButton = getByTestId("BookForm-submit");
 
-        // assert - check that the console.log was called with the expected message
-        expect(console.log).toHaveBeenCalled();
-        const message = console.log.mock.calls[0][0];
-        const expectedMessage =  `createdBook: {"book":{"id":3,"title":"The Kite Runner","author":"Khaled Hosseini","year":"2003"}`
+        fireEvent.change(titleField, { target: { value: 'Harry Potter and the Chamber of Secrets' } })
+        fireEvent.change(authorField, { target: { value: 'JK Rowling' } })
+        fireEvent.change(yearField, { target: { value: '1998' } })
 
-        expect(message).toMatch(expectedMessage);
-        restoreConsole();
+        expect(submitButton).toBeInTheDocument();
 
+        fireEvent.click(submitButton);
+
+
+        await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+        expect(axiosMock.history.post[0].params).toEqual(
+            {
+                
+                "title": "Harry Potter and the Chamber of Secrets", 
+                "author": "JK Rowling",
+                "year": "1998"
+            });
+
+        expect(mockToast).toBeCalledWith("New book created - id: 17 title: Harry Potter and the Chamber of Secrets");
+        expect(mockNavigate).toBeCalledWith({ "to": "/books/list" });
     });
 
+
 });
-
-
-
