@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s23/team03-s23-6pm-2
 owner: ucsb-cs156-s23
 repo_name: team03-s23-6pm-2
-pull_requests: [{"author":{"id":"MDQ6VXNlcjUxMzkzMTI3","is_bot":false,"login":"chriscerie","name":"Chris Chang"},"headRefName":"dog-connect-backend","number":25,"title":"Connect dog frontend to backend","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/25"}]
+pull_requests: [{"author":{"id":"MDQ6VXNlcjczODIxMTU5","is_bot":false,"login":"RylanPow","name":""},"headRefName":"Rylan-Book-Issues","number":26,"title":"book create and edit pages + local tests, all pass","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/26"},{"author":{"id":"MDQ6VXNlcjUxMzkzMTI3","is_bot":false,"login":"chriscerie","name":"Chris Chang"},"headRefName":"dog-connect-backend","number":25,"title":"Connect dog frontend to backend","url":"https://github.com/ucsb-cs156-s23/team03-s23-6pm-2/pull/25"}]
