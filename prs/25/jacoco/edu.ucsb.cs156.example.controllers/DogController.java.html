@@ -42,9 +42,9 @@ import javax.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
     @GetMapping(&quot;&quot;)
     public Dog getById(
-            @ApiParam(&quot;name&quot;) @RequestParam String name) {
-<span class="fc" id="L46">        Dog dog = dogRepository.findById(name)</span>
-<span class="fc" id="L47">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, name));</span>
+            @ApiParam(&quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L46">        Dog dog = dogRepository.findById(id)</span>
+<span class="fc" id="L47">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, id));</span>
 
 <span class="fc" id="L49">        return dog;</span>
     }
@@ -70,23 +70,23 @@ import javax.validation.Valid;
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @DeleteMapping(&quot;&quot;)
     public Object deleteDog(
-            @ApiParam(&quot;name&quot;) @RequestParam String name) {
-<span class="fc" id="L74">        Dog dog = dogRepository.findById(name)</span>
-<span class="fc" id="L75">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, name));</span>
+            @ApiParam(&quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L74">        Dog dog = dogRepository.findById(id)</span>
+<span class="fc" id="L75">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, id));</span>
 
 <span class="fc" id="L77">        dogRepository.delete(dog);</span>
-<span class="fc" id="L78">        return genericMessage(&quot;Dog with id %s deleted&quot;.formatted(name));</span>
+<span class="fc" id="L78">        return genericMessage(&quot;Dog with id %s deleted&quot;.formatted(id));</span>
     }
 
     @ApiOperation(value = &quot;Update a single dog&quot;)
     @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
     @PutMapping(&quot;&quot;)
     public Dog updateDog(
-            @ApiParam(&quot;name&quot;) @RequestParam String name,
+            @ApiParam(&quot;id&quot;) @RequestParam Long id,
             @RequestBody @Valid Dog incoming) {
 
-<span class="fc" id="L88">        Dog dog = dogRepository.findById(name)</span>
-<span class="fc" id="L89">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, name));</span>
+<span class="fc" id="L88">        Dog dog = dogRepository.findById(id)</span>
+<span class="fc" id="L89">                .orElseThrow(() -&gt; new EntityNotFoundException(Dog.class, id));</span>
 
 <span class="fc" id="L91">        dog.updateFrom(incoming);</span>
 
