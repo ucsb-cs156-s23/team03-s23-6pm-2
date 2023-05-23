@@ -88,7 +88,6 @@ public class DogControllerTests extends ControllerTestCase {
         Dog dog = Dog.builder()
                 .name("Max")
                 .breed("Golden Retriever")
-                .gender("Male")
                 .build();
 
         when(dogRepository.findById(eq("Max"))).thenReturn(Optional.of(dog));
@@ -134,13 +133,11 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog max = Dog.builder()
                 .name("Max")
                 .breed("Golden Retriever")
-                .gender("Male")
                 .build();
 
         Dog annie = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         ArrayList<Dog> expectedDogs = new ArrayList<>();
@@ -168,14 +165,13 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog annie = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         when(dogRepository.save(eq(annie))).thenReturn(annie);
 
         // act
         MvcResult response = mockMvc.perform(
-                post("/api/dogs/post?name=Annie&breed=Poodle&gender=Female")
+                post("/api/dogs/post?name=Annie&breed=Poodle")
                         .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
 
@@ -194,7 +190,6 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog annie = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         when(dogRepository.findById(eq("Annie"))).thenReturn(Optional.of(annie));
@@ -241,13 +236,11 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog annieOriginal = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         Dog annieEdited = Dog.builder()
                 .name("Annie")
                 .breed("Yorkie")
-                .gender("Female")
                 .build();
 
         String requestBody = mapper.writeValueAsString(annieEdited);
@@ -278,7 +271,6 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog annieEdited = Dog.builder()
                 .name("Annie")
                 .breed("Yorkie")
-                .gender("Female")
                 .build();
 
         String requestBody = mapper.writeValueAsString(annieEdited);

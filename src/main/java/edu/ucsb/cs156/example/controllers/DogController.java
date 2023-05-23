@@ -54,14 +54,12 @@ public class DogController extends ApiController {
     @PostMapping("/post")
     public Dog postDog(
             @ApiParam("name") @RequestParam String name,
-            @ApiParam("breed") @RequestParam String breed,
-            @ApiParam("gender (`Male` or `Female`)") @RequestParam String gender)
+            @ApiParam("breed") @RequestParam String breed)
             throws JsonProcessingException {
 
         Dog dog = new Dog();
         dog.setName(name);
         dog.setBreed(breed);
-        dog.setGender(gender);
 
         Dog savedDog = dogRepository.save(dog);
 
@@ -90,7 +88,7 @@ public class DogController extends ApiController {
         Dog dog = dogRepository.findById(name)
                 .orElseThrow(() -> new EntityNotFoundException(Dog.class, name));
 
-dog.updateFrom(incoming);
+        dog.updateFrom(incoming);
 
         dogRepository.save(dog);
 
