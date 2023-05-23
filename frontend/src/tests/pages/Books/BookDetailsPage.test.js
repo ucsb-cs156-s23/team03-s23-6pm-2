@@ -1,66 +1,92 @@
-import { render, screen } from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import BookDetailsPage from "main/pages/Books/BookDetailsPage";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { MemoryRouter } from "react-router-dom";
-import { apiCurrentUserFixtures }  from "fixtures/currentUserFixtures";
-import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
+import {QueryClient, QueryClientProvider} from "react-query";
+import {MemoryRouter} from "react-router-dom";
+import {apiCurrentUserFixtures} from "fixtures/currentUserFixtures";
+import {systemInfoFixtures} from "fixtures/systemInfoFixtures";
 import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: () => ({
-        id: 3
-    }),
-    useNavigate: () => mockNavigate
-}));
 
-jest.mock('main/utils/bookUtils', () => {
-    return {
-        __esModule: true,
-        bookUtils: {
-            getById: (_id) => {
-                return {
-                    book: {
-                        id: 3,
-                        title: "Freebirds",
-                        author: "Burritos"
-                    }
-                }
-            }
-        }
-    }
+jest.mock('react-router-dom', () => {
+  const originalModule = jest.requireActual('react-router-dom');
+  return {
+    __esModule: true,
+    ...originalModule,
+    useParams: () => ({
+      id: 2
+    }),
+  };
 });
 
 describe("BookDetailsPage tests", () => {
-    const axiosMock =new AxiosMockAdapter(axios);
+
+  let queryClient;
+  const axiosMock = new AxiosMockAdapter(axios);
+  beforeEach(() => {
+    queryClient = new QueryClient();
+    axiosMock.reset();
     axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
     axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
-    const queryClient = new QueryClient();
-    test("renders without crashing", () => {
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter>
-                    <BookDetailsPage />
-                </MemoryRouter>
-            </QueryClientProvider>
-        );
+  });
+
+  test("renders headers only when backend doesn't return a book", async () => {
+    axiosMock.onGet("/api/books", {params: { id: 2 }}).timeout();
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <BookDetailsPage/>
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+    await screen.findByText("Book Details");
+    const expectedHeaders = ["id", "title", "author", "year"];
+    expectedHeaders.forEach((header) => {
+      expect(screen.getByTestId(`BookTable-header-${header}`)).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("BookTable-cell-row-0-col-id")).not.toBeInTheDocument();
+  });
+
+  describe("when backend returns a book", () => {
+    beforeEach(() => {
+      axiosMock.onGet("/api/books", {params: { id: 2 }}).reply(200, {
+        id: 2,
+        title: "The Lord of the Rings",
+        author: "J.R.R. Tolkien",
+        year: "1954"
+      });
     });
 
-    test("loads the correct fields, and no buttons", async () => {
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter>
-                    <BookDetailsPage />
-                </MemoryRouter>
-            </QueryClientProvider>
-        );
-        expect(screen.getByText("Freebirds")).toBeInTheDocument();
-        expect(screen.getByText("Burritos")).toBeInTheDocument();
-
-        expect(screen.queryByText("Delete")).not.toBeInTheDocument();
-        expect(screen.queryByText("Edit")).not.toBeInTheDocument();
-        expect(screen.queryByText("Details")).not.toBeInTheDocument();
+    test("renders without crashing", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <BookDetailsPage/>
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
     });
 
+    test("loads the correct fields, and has no buttons", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <BookDetailsPage/>
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("The Lord of the Rings")).toBeInTheDocument();
+      });
+
+      expect(screen.getByText("The Lord of the Rings")).toBeInTheDocument();
+      expect(screen.getByText("J.R.R. Tolkien")).toBeInTheDocument();
+      expect(screen.getByText("1954")).toBeInTheDocument();
+
+      expect(screen.queryByText("Delete")).not.toBeInTheDocument();
+      expect(screen.queryByText("Edit")).not.toBeInTheDocument();
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+    });
+
+  });
 });
