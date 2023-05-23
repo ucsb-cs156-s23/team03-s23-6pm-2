@@ -5,7 +5,6 @@ const dogFixtures = {
        "id": 1,
         "name": "Max",
         "breed": "Yorkie",
-        "gender": "Male"   
       }
     ],
 
@@ -15,21 +14,18 @@ const dogFixtures = {
             "id": 2,
             "name": "Annie",
             "breed": "Poodle",
-            "gender": "Female"   
         },
 
         {
             "id": 3,
             "name": "Tom",
             "breed": "German Shepherd",
-            "gender": "Male"   
         },
 
         {
             "id": 4,
             "name": "Lucy",
             "breed": "Golden Retriever",
-            "gender": "Female"    
         },
         
     ]

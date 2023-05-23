@@ -1,124 +1,160 @@
-import { render, screen, act, waitFor, fireEvent } from "@testing-library/react";
-import DogsEditPage from "main/pages/Dogs/DogsEditPage";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import DogEditPage from "main/pages/Dogs/DogEditPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { MemoryRouter } from "react-router-dom";
-import mockConsole from "jest-mock-console";
-import { apiCurrentUserFixtures }  from "fixtures/currentUserFixtures";
-import { systemInfoFixtures } from "fixtures/systemInfoFixtures";
-import axios from "axios";
 import AxiosMockAdapter from "axios-mock-adapter";
+import axios from "axios";
+import { apiCurrentUserFixtures } from "../../../fixtures/currentUserFixtures";
+import { systemInfoFixtures } from "../../../fixtures/systemInfoFixtures";
+
+const mockToast = jest.fn();
+jest.mock("react-toastify", () => {
+  const originalModule = jest.requireActual("react-toastify");
+  return {
+    __esModule: true,
+    ...originalModule,
+    toast: (x) => mockToast(x),
+  };
+});
 
 const mockNavigate = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+jest.mock("react-router-dom", () => {
+  const originalModule = jest.requireActual("react-router-dom");
+  return {
+    __esModule: true,
+    ...originalModule,
     useParams: () => ({
-        id: 3
+      id: 3,
     }),
-    useNavigate: () => mockNavigate
-}));
-
-const mockUpdate = jest.fn();
-jest.mock('main/utils/dogUtils', () => {
-    return {
-        __esModule: true,
-        dogUtils: {
-            update: (_dog) => {return mockUpdate();},
-            getById: (_id) => {
-                return {
-                    dog: {
-                        id: 3,
-                        name: "Tom",
-                        breed: "German Shepherd"
-                    }
-                }
-            }
-        }
-    }
+    Navigate: (x) => {
+      mockNavigate(x);
+      return null;
+    },
+  };
 });
 
+describe("EditDogPage tests", () => {
+  const axiosMock = new AxiosMockAdapter(axios);
+  let queryClient;
 
-describe("dogEditPage tests", () => {
-    const axiosMock =new AxiosMockAdapter(axios);
+  beforeEach(() => {
+    queryClient = new QueryClient();
+    axiosMock.reset();
     axiosMock.onGet("/api/currentUser").reply(200, apiCurrentUserFixtures.userOnly);
-    axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither); 
+    axiosMock.onGet("/api/systemInfo").reply(200, systemInfoFixtures.showingNeither);
+  });
 
-    const queryClient = new QueryClient();
+  describe("when API does not return a dog", () => {
+    test("renders headline only", async () => {
+      axiosMock.onGet("/api/dogs", { params: { id: 3 } }).timeout();
+
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <DogEditPage />
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
+
+      await screen.findByText("Edit dog");
+      expect(screen.queryByTestId("DogForm-id")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("functional API", () => {
+    beforeEach(() => {
+      axiosMock.onGet("/api/dogs", { params: { id: 3 } }).reply(200, {
+        name: "Max",
+        breed: "Yorkie",
+        id: 3,
+      });
+    });
 
     test("renders without crashing", () => {
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter>
-                    <DogsEditPage />
-                </MemoryRouter>
-            </QueryClientProvider>
-        );
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <DogEditPage />
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
     });
 
-    test("loads the correct fields", async () => {
+    test("populates form with existing dog data", async () => {
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <DogEditPage />
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter>
-                    <DogsEditPage />
-                </MemoryRouter>
-            </QueryClientProvider>
-        );
+      await waitFor(() => {
+        const idField = screen.getByTestId("DogForm-id");
+        expect(idField).toHaveValue("3");
+      });
 
-        expect(screen.getByTestId("DogForm-name")).toBeInTheDocument();
-        expect(screen.getByDisplayValue('Tom')).toBeInTheDocument();
-        expect(screen.getByDisplayValue('German Shepherd')).toBeInTheDocument();
+      const nameInput = screen.getByLabelText("Name");
+      const breedInput = screen.getByLabelText("Breed");
+      const updateButton = screen.getByText("Update");
+
+      expect(nameInput).toHaveValue("Max");
+      expect(breedInput).toHaveValue("Yorkie");
+      expect(updateButton).toBeInTheDocument();
     });
 
-    test("redirects to /Dogs on submit", async () => {
+    test("on form submit, calls API and navigates to dog list", async () => {
+      axiosMock.onPut("/api/dogs").reply(200, {
+        id: "3",
+        name: "Max",
+        breed: "Yorkie",
+      });
 
-        const restoreConsole = mockConsole();
+      render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter>
+            <DogEditPage />
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
 
-        mockUpdate.mockReturnValue({
-            "Dog": {
-                id: 3,
-                name: "Tom",
-                breed: "German Shepherd"
-            }
-        });
+      await waitFor(async () => {
+        const idField = await screen.findByTestId("DogForm-id");
+        expect(idField).toHaveValue("3");
+      });
 
-        render(
-            <QueryClientProvider client={queryClient}>
-                <MemoryRouter>
-                    <DogsEditPage />
-                </MemoryRouter>
-            </QueryClientProvider>
+      const nameInput = screen.getByLabelText("Name");
+      const breedInput = screen.getByLabelText("Breed");
+      const updateButton = screen.getByText("Update");
+
+      expect(nameInput).toHaveValue("Max");
+      expect(breedInput).toHaveValue("Yorkie");
+      expect(updateButton).toBeInTheDocument();
+
+      fireEvent.change(nameInput, { target: { value: "Max" } });
+      fireEvent.change(breedInput, { target: { value: "Yorkie" } });
+
+      fireEvent.click(updateButton);
+
+      await waitFor(() =>
+        expect(mockToast).toHaveBeenCalledWith(
+          "Dog Updated - id: 3 name: Max"
         )
+      );
+      await waitFor(() =>
+        expect(mockNavigate).toHaveBeenCalledWith({
+          to: "/dogs",
+        })
+      );
 
-        const nameInput = screen.getByLabelText("Name");
-        expect(nameInput).toBeInTheDocument();
-
-
-        const breedInput = screen.getByLabelText("Breed");
-        expect(breedInput).toBeInTheDocument();
-
-        const updateButton = screen.getByText("Update");
-        expect(updateButton).toBeInTheDocument();
-
-        await act(async () => {
-            fireEvent.change(nameInput, { target: { value: 'Tom' } })
-            fireEvent.change(breedInput, { target: { value: 'German Shepherd' } })
-            fireEvent.click(updateButton);
-        });
-
-        await waitFor(() => expect(mockUpdate).toHaveBeenCalled());
-        await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/dogs/list"));
-
-        // assert - check that the console.log was called with the expected message
-        expect(console.log).toHaveBeenCalled();
-        const message = console.log.mock.calls[0][0];
-        const expectedMessage =  `updateddog: {"Dog":{"id":3,"name":"Tom","breed":"German Shepherd"}`
-
-        expect(message).toMatch(expectedMessage);
-        restoreConsole();
-
+      expect(axiosMock.history.put.length).toBe(1);
+      expect(axiosMock.history.put[0].params).toEqual({ id: 3});
+      expect(axiosMock.history.put[0].data).toBe(
+        JSON.stringify({
+          name: "Max",
+          breed: "Yorkie",
+        })
+      );
     });
-
+  });
 });
-
-

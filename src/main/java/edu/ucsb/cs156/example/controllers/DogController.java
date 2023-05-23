@@ -42,9 +42,9 @@ public class DogController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public Dog getById(
-            @ApiParam("name") @RequestParam String name) {
-        Dog dog = dogRepository.findById(name)
-                .orElseThrow(() -> new EntityNotFoundException(Dog.class, name));
+            @ApiParam("id") @RequestParam Long id) {
+        Dog dog = dogRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Dog.class, id));
 
         return dog;
     }
@@ -54,14 +54,12 @@ public class DogController extends ApiController {
     @PostMapping("/post")
     public Dog postDog(
             @ApiParam("name") @RequestParam String name,
-            @ApiParam("breed") @RequestParam String breed,
-            @ApiParam("gender (`Male` or `Female`)") @RequestParam String gender)
+            @ApiParam("breed") @RequestParam String breed)
             throws JsonProcessingException {
 
         Dog dog = new Dog();
         dog.setName(name);
         dog.setBreed(breed);
-        dog.setGender(gender);
 
         Dog savedDog = dogRepository.save(dog);
 
@@ -72,25 +70,25 @@ public class DogController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
     public Object deleteDog(
-            @ApiParam("name") @RequestParam String name) {
-        Dog dog = dogRepository.findById(name)
-                .orElseThrow(() -> new EntityNotFoundException(Dog.class, name));
+            @ApiParam("id") @RequestParam Long id) {
+        Dog dog = dogRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Dog.class, id));
 
         dogRepository.delete(dog);
-        return genericMessage("Dog with id %s deleted".formatted(name));
+        return genericMessage("Dog with id %s deleted".formatted(id));
     }
 
     @ApiOperation(value = "Update a single dog")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
     public Dog updateDog(
-            @ApiParam("name") @RequestParam String name,
+            @ApiParam("id") @RequestParam Long id,
             @RequestBody @Valid Dog incoming) {
 
-        Dog dog = dogRepository.findById(name)
-                .orElseThrow(() -> new EntityNotFoundException(Dog.class, name));
+        Dog dog = dogRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Dog.class, id));
 
-dog.updateFrom(incoming);
+        dog.updateFrom(incoming);
 
         dogRepository.save(dog);
 

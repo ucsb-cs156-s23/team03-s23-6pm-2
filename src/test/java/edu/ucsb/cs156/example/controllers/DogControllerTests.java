@@ -57,7 +57,7 @@ public class DogControllerTests extends ControllerTestCase {
 
     @Test
     public void logged_out_users_cannot_get_by_id() throws Exception {
-        mockMvc.perform(get("/api/dogs?name=max"))
+        mockMvc.perform(get("/api/dogs?id=3"))
                 .andExpect(status().is(403)); // logged out users can't get by id
     }
 
@@ -88,18 +88,17 @@ public class DogControllerTests extends ControllerTestCase {
         Dog dog = Dog.builder()
                 .name("Max")
                 .breed("Golden Retriever")
-                .gender("Male")
                 .build();
 
-        when(dogRepository.findById(eq("Max"))).thenReturn(Optional.of(dog));
+        when(dogRepository.findById(eq(3L))).thenReturn(Optional.of(dog));
 
         // act
-        MvcResult response = mockMvc.perform(get("/api/dogs?name=Max"))
+        MvcResult response = mockMvc.perform(get("/api/dogs?id=3"))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
 
-        verify(dogRepository, times(1)).findById(eq("Max"));
+        verify(dogRepository, times(1)).findById(eq(3L));
         String expectedJson = mapper.writeValueAsString(dog);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
@@ -111,18 +110,18 @@ public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() 
 
 // arrange
 
-when(dogRepository.findById(eq("dne"))).thenReturn(Optional.empty());
+when(dogRepository.findById(eq(0L))).thenReturn(Optional.empty());
 
 // act
-MvcResult response = mockMvc.perform(get("/api/dogs?name=dne"))
+MvcResult response = mockMvc.perform(get("/api/dogs?id=0"))
 .andExpect(status().isNotFound()).andReturn();
 
 // assert
 
-verify(dogRepository, times(1)).findById(eq("dne"));
+verify(dogRepository, times(1)).findById(eq(0L));
 Map<String, Object> json = responseToJson(response);
 assertEquals("EntityNotFoundException", json.get("type"));
-assertEquals("Dog with id dne not found", json.get("message"));
+assertEquals("Dog with id 0 not found", json.get("message"));
 }
 
     @WithMockUser(roles = { "USER" })
@@ -134,13 +133,11 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog max = Dog.builder()
                 .name("Max")
                 .breed("Golden Retriever")
-                .gender("Male")
                 .build();
 
         Dog annie = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         ArrayList<Dog> expectedDogs = new ArrayList<>();
@@ -168,14 +165,13 @@ assertEquals("Dog with id dne not found", json.get("message"));
         Dog annie = Dog.builder()
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         when(dogRepository.save(eq(annie))).thenReturn(annie);
 
         // act
         MvcResult response = mockMvc.perform(
-                post("/api/dogs/post?name=Annie&breed=Poodle&gender=Female")
+                post("/api/dogs/post?name=Annie&breed=Poodle")
                         .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
 
@@ -192,25 +188,25 @@ assertEquals("Dog with id dne not found", json.get("message"));
         // arrange
 
         Dog annie = Dog.builder()
+                .id(2)
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
-        when(dogRepository.findById(eq("Annie"))).thenReturn(Optional.of(annie));
+        when(dogRepository.findById(eq(2L))).thenReturn(Optional.of(annie));
 
         // act
         MvcResult response = mockMvc.perform(
-                delete("/api/dogs?name=Annie")
+                delete("/api/dogs?id=2")
                         .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(dogRepository, times(1)).findById("Annie");
+        verify(dogRepository, times(1)).findById(2L);
         verify(dogRepository, times(1)).delete(any());
 
         Map<String, Object> json = responseToJson(response);
-        assertEquals("Dog with id Annie deleted", json.get("message"));
+        assertEquals("Dog with id 2 deleted", json.get("message"));
     }
 
 @WithMockUser(roles = { "ADMIN", "USER" })
@@ -219,18 +215,18 @@ public void admin_tries_to_delete_non_existant_dog_and_gets_right_error_message(
 throws Exception {
 // arrange
 
-when(dogRepository.findById(eq("dne"))).thenReturn(Optional.empty());
+when(dogRepository.findById(eq(0L))).thenReturn(Optional.empty());
 
 // act
 MvcResult response = mockMvc.perform(
-delete("/api/dogs?name=dne")
+delete("/api/dogs?id=0")
                 .with(csrf()))
 .andExpect(status().isNotFound()).andReturn();
 
 // assert
-verify(dogRepository, times(1)).findById("dne");
+verify(dogRepository, times(1)).findById(0L);
 Map<String, Object> json = responseToJson(response);
-assertEquals("Dog with id dne not found", json.get("message"));
+assertEquals("Dog with id 0 not found", json.get("message"));
 }
 
     @WithMockUser(roles = { "ADMIN", "USER" })
@@ -239,24 +235,24 @@ assertEquals("Dog with id dne not found", json.get("message"));
         // arrange
 
         Dog annieOriginal = Dog.builder()
+                .id(2)
                 .name("Annie")
                 .breed("Poodle")
-                .gender("Female")
                 .build();
 
         Dog annieEdited = Dog.builder()
+                .id(2)
                 .name("Annie")
                 .breed("Yorkie")
-                .gender("Female")
                 .build();
 
         String requestBody = mapper.writeValueAsString(annieEdited);
 
-        when(dogRepository.findById(eq("Annie"))).thenReturn(Optional.of(annieOriginal));
+        when(dogRepository.findById(eq(2L))).thenReturn(Optional.of(annieOriginal));
 
         // act
         MvcResult response = mockMvc.perform(
-                put("/api/dogs?name=Annie")
+                put("/api/dogs?id=2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
                         .content(requestBody)
@@ -264,7 +260,7 @@ assertEquals("Dog with id dne not found", json.get("message"));
                 .andExpect(status().isOk()).andReturn();
 
         // assert
-        verify(dogRepository, times(1)).findById("Annie");
+        verify(dogRepository, times(1)).findById(2L);
         verify(dogRepository, times(1)).save(annieEdited); // should be saved with updated info
         String responseString = response.getResponse().getContentAsString();
         assertEquals(requestBody, responseString);
@@ -276,18 +272,18 @@ assertEquals("Dog with id dne not found", json.get("message"));
         // arrange
 
         Dog annieEdited = Dog.builder()
+                .id(2)
                 .name("Annie")
                 .breed("Yorkie")
-                .gender("Female")
                 .build();
 
         String requestBody = mapper.writeValueAsString(annieEdited);
 
-        when(dogRepository.findById(eq("Annie"))).thenReturn(Optional.empty());
+        when(dogRepository.findById(eq(2L))).thenReturn(Optional.empty());
 
         // act
         MvcResult response = mockMvc.perform(
-                put("/api/dogs?name=Annie")
+                put("/api/dogs?id=2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("utf-8")
                         .content(requestBody)
@@ -295,9 +291,9 @@ assertEquals("Dog with id dne not found", json.get("message"));
                 .andExpect(status().isNotFound()).andReturn();
 
         // assert
-        verify(dogRepository, times(1)).findById("Annie");
+        verify(dogRepository, times(1)).findById(2L);
         Map<String, Object> json = responseToJson(response);
-        assertEquals("Dog with id Annie not found", json.get("message"));
+        assertEquals("Dog with id 2 not found", json.get("message"));
 
     }
 }
